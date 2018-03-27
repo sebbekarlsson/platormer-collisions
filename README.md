@@ -3,3 +3,10 @@
 > 2D-platformer.
 
 ![collision.png](collision.png)
+
+## Features
+* Jumping
+* Collision against walls
+* Collision against ground
+* Collision under grounds
+* Picking up items
