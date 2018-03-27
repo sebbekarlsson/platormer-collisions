@@ -20,20 +20,37 @@ var Player = function(x, y) {
     _this.onGround = false;
 
     document.addEventListener('keydown', function(e) {
-
         e = e || window.event;
 
         if (e.keyCode == '38') {
             _this.upArrow = true;
         }
-        else if (e.keyCode == '40') {
+        if (e.keyCode == '40') {
             _this.downArrow = true;
         }
-        else if (e.keyCode == '37') {
+        if (e.keyCode == '37') {
             _this.leftArrow = true;
         }
-        else if (e.keyCode == '39') {
+        if (e.keyCode == '39') {
             _this.rightArrow = true;
+        }
+
+    });
+
+    document.addEventListener('keyup', function(e) {
+        e = e || window.event;
+
+        if (e.keyCode == '38') {
+            _this.upArrow = false;
+        }
+        if (e.keyCode == '40') {
+            _this.downArrow = false;
+        }
+        if (e.keyCode == '37') {
+            _this.leftArrow = false;
+        }
+        if (e.keyCode == '39') {
+            _this.rightArrow = false;
         }
 
     });
@@ -44,6 +61,8 @@ var Player = function(x, y) {
     };
 
     _this.tick = function() {
+        _this.x += _this.dx;
+        _this.y += _this.dy;
         _this.onGround = false;
 
         if (_this.dx > 0) {
@@ -74,69 +93,49 @@ var Player = function(x, y) {
                 _this.dy += _this.friction;
         }
 
-        var inst = null;
-
         for (var i = 0; i < window.application.instances.length; i++) {
             var instance = window.application.instances[i];
 
             if (instance == _this)
                 continue;
+
             if (
                 _this.x < instance.x + 32 &&
-                _this.x + 32 > instance.x &&
+                _this.x + 24 > instance.x &&
                 _this.y < instance.y + 32 &&
-                _this.y + 32 > instance.y
+                _this.y + 24 > instance.y
             ) {
-                inst = instance;
+                _this.y = _this.prevy;
+                _this.dy = 0;
                 _this.onGround = true;
 
-                if (_this.x + 32 > inst.x && _this.y >= inst.y)
-                    _this.x = inst.x - 32;
-
-                else if (_this.x < inst.x + 32 && _this.y >= inst.y)
-                    _this.x = inst.x + 32;
+                if (_this.y + 24 > instance.y) {
+                    _this.x = _this.prevx;
+                    _this.dx = 0;
+                }
                 
-                if (_this.y< inst.y)
-                    _this.y = inst.y - 32;
             }
         }
 
-
-
-        _this.x += _this.dx;
-        _this.y += _this.dy;
-
-
         if (_this.rightArrow)
-            _this.addForce(0, 2.5);
+            _this.addForce(0, 0.5);
 
         if (_this.leftArrow)
-            _this.addForce(180, 2.5);
-
-
+            _this.addForce(180, 0.5);
 
         if (!_this.onGround) {
             _this.dy += 0.2;
-        } else {
-            if (_this.upArrow) {
-                _this.addForce(270, 5.5);
-            }
+        } else if (_this.upArrow) {
+            _this.addForce(270, 6.5);
         }
-
-
-
-
+       
         _this.prevx = _this.x;
         _this.prevy = _this.y;
-        _this.upArrow = false;
-        _this.downArrow = false;
-        _this.leftArrow = false;
-        _this.rightArrow = false;
     };
 
     _this.draw = function() {
         window.application.ctx.fillStyle = 'red';
-        window.application.ctx.rect(_this.x, _this.y, 32, 32);
+        window.application.ctx.rect(_this.x, _this.y, 24, 24);
         window.application.ctx.stroke();
     };
 };
@@ -169,6 +168,7 @@ var Application = function(canvas) {
 
     _this.instances.push(new Block(4*32, 200-32));
     _this.instances.push(new Block(4*32, 200-64));
+    _this.instances.push(new Block(6*32, 200-(32*3)));
 
     _this.tick = function() {
         for (var i = 0; i < _this.instances.length; i++)
