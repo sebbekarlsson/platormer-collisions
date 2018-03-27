@@ -106,12 +106,21 @@ var Player = function(x, y) {
                 _this.y < instance.y + instance.size &&
                 _this.y + _this.size > instance.y
             ) {
+                if (
+                    _this.x + _this.size - 1 > instance.x &&
+                    _this.x < instance.x + instance.size - 1
+                ) {
+                    _this.y = _this.prevy;
+                    _this.dy = 0;
+                    
+                    if (!(_this.y > instance.y + instance.size))
+                        _this.onGround = true;
+                }
 
-                _this.y = _this.prevy;
-                _this.dy = 0;
-                _this.onGround = true;
-
-                if (_this.y + _this.size > instance.y && _this.y < instance.y + instance.size) {
+                if (
+                    _this.y + _this.size - 1 > instance.y &&
+                    _this.y < instance.y + instance.size - 1
+                ) {
                     _this.x = _this.prevx;
                     _this.dx = 0;
                 }
