@@ -18,6 +18,7 @@ var Player = function(x, y) {
     _this.leftArrow = false;
     _this.rightArrow = false;
     _this.onGround = false;
+    _this.size = 24;
 
     document.addEventListener('keydown', function(e) {
         e = e || window.event;
@@ -100,20 +101,20 @@ var Player = function(x, y) {
                 continue;
 
             if (
-                _this.x < instance.x + 32 &&
-                _this.x + 24 > instance.x &&
-                _this.y < instance.y + 32 &&
-                _this.y + 24 > instance.y
+                _this.x < instance.x + instance.size &&
+                _this.x + _this.size > instance.x &&
+                _this.y < instance.y + instance.size &&
+                _this.y + _this.size > instance.y
             ) {
+
                 _this.y = _this.prevy;
                 _this.dy = 0;
                 _this.onGround = true;
 
-                if (_this.y + 24 > instance.y) {
+                if (_this.y + _this.size > instance.y && _this.y < instance.y + instance.size) {
                     _this.x = _this.prevx;
                     _this.dx = 0;
                 }
-                
             }
         }
 
@@ -135,7 +136,7 @@ var Player = function(x, y) {
 
     _this.draw = function() {
         window.application.ctx.fillStyle = 'red';
-        window.application.ctx.rect(_this.x, _this.y, 24, 24);
+        window.application.ctx.rect(_this.x, _this.y, _this.size, _this.size);
         window.application.ctx.stroke();
     };
 };
@@ -145,12 +146,13 @@ var Block = function(x, y) {
 
     _this.x = x;
     _this.y = y;
+    _this.size = 32;
 
     _this.tick = function() {};
 
     _this.draw = function() {
         window.application.ctx.fillStyle = 'black';
-        window.application.ctx.rect(_this.x, _this.y, 32, 32);
+        window.application.ctx.rect(_this.x, _this.y, _this.size, _this.size);
         window.application.ctx.stroke();
     };
 };
@@ -163,12 +165,13 @@ var Application = function(canvas) {
 
     _this.instances.push(new Player(120, 60));
 
-    for (var i = 2; i < 9; i++)
+    for (var i = 2; i < 16; i++)
         _this.instances.push(new Block(i*32, 200));
 
     _this.instances.push(new Block(4*32, 200-32));
     _this.instances.push(new Block(4*32, 200-64));
     _this.instances.push(new Block(6*32, 200-(32*3)));
+    _this.instances.push(new Block(15*32, 200-32));
 
     _this.tick = function() {
         for (var i = 0; i < _this.instances.length; i++)
